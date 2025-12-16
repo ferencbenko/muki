@@ -1,0 +1,13 @@
+flags:
+  backend:
+    paths:
+      - backend/
+    carryforward: true
+  frontend:
+    paths:
+      - frontend/
+    carryforward: true
+
+comment:
+  layout: "flags"
+  show_carryforward_flags: true
