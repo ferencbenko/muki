@@ -9,7 +9,7 @@ export default defineConfig({
     setupFiles: './src/setupTests.ts',
     coverage: {
       provider: 'v8',
-      reporter: ['text', 'json', 'html'],
+      reporter: ['text', 'json', 'html', 'lcov'],
       exclude: [
         'node_modules/',
         'src/setupTests.ts',
@@ -24,9 +24,12 @@ export default defineConfig({
         'src/components/ProductList.tsx',
         'src/components/ShoppingCart.tsx',
         'src/services/api.ts',
+        '**/.eslintrc.*',
+        '**/.*rc.*',
+        '**/*.cjs',
       ],
       thresholds: {
-        branches: 70,
+        branches: 75,
         functions: 75,
         lines: 75,
         statements: 75,

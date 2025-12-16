@@ -1,7 +1,7 @@
 import { Box, CssBaseline, ThemeProvider } from '@mui/material';
 import { Header } from './components/Header';
-import { ProductList } from './components/ProductList';
 import { ShoppingCart } from './components/ShoppingCart';
+import { ProductsPage } from './pages/ProductsPage';
 import { theme } from './theme';
 
 function App() {
@@ -10,7 +10,7 @@ function App() {
       <CssBaseline />
       <Box sx={{ minHeight: '100vh', bgcolor: 'background.default' }}>
         <Header />
-        <ProductList />
+        <ProductsPage />
         <ShoppingCart />
       </Box>
     </ThemeProvider>

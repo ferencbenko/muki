@@ -11,8 +11,7 @@ module.exports = {
     '!src/server.ts',
     '!src/**/*.d.ts',
     '!src/types/**',
-    '!src/config/swagger.ts',
-    '!src/config/database.ts',
+    '!src/config/**',
     '!src/middleware/auth.ts',
     '!src/routes/**',
     '!src/controllers/**',
@@ -20,7 +19,7 @@ module.exports = {
   ],
   coverageThreshold: {
     global: {
-      branches: 70,
+      branches: 75,
       functions: 75,
       lines: 75,
       statements: 75,

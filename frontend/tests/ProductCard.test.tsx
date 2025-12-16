@@ -1,8 +1,9 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProductCard } from '../src/components/ProductCard';
 import { useCartStore } from '../src/store/cartStore';
-import { Product } from '../src/types';
+import { CartItem, CartState, Product } from '../src/types';
 
 // Mock the store
 vi.mock('../src/store/cartStore');
@@ -10,17 +11,27 @@ vi.mock('../src/store/cartStore');
 describe('ProductCard', () => {
   const mockAddToCart = vi.fn();
 
+  const mockStoreWithItems = (items: CartItem[] = []) => {
+    vi.mocked(useCartStore).mockImplementation(<T,>(selector: (state: CartState) => T): T => {
+      const store = {
+        addToCart: mockAddToCart,
+        items,
+        removeFromCart: vi.fn(),
+        updateQuantity: vi.fn(),
+        clearCart: vi.fn(),
+        getTotal: vi.fn(() => 0),
+        getItemCount: vi.fn(() => 0),
+        isOpen: false,
+        openCart: vi.fn(),
+        closeCart: vi.fn(),
+      };
+      return selector(store);
+    });
+  };
+
   beforeEach(() => {
     vi.clearAllMocks();
-    vi.mocked(useCartStore).mockReturnValue({
-      addToCart: mockAddToCart,
-      items: [],
-      removeFromCart: vi.fn(),
-      updateQuantity: vi.fn(),
-      clearCart: vi.fn(),
-      getTotal: vi.fn(() => 0),
-      getItemCount: vi.fn(() => 0),
-    });
+    mockStoreWithItems([]);
   });
 
   const mockProduct: Product = {
@@ -39,7 +50,7 @@ describe('ProductCard', () => {
 
     expect(screen.getByText('Test Product')).toBeInTheDocument();
     expect(screen.getByText('Test Description')).toBeInTheDocument();
-    expect(screen.getByText('$99.99')).toBeInTheDocument();
+    expect(screen.getByText('€99.99')).toBeInTheDocument();
   });
 
   it('displays out of stock badge when stock is 0', () => {
@@ -85,7 +96,72 @@ describe('ProductCard', () => {
     expect(screen.getByText('No description available')).toBeInTheDocument();
   });
 
-  // Note: Testing MUI's click event with Zustand mocks is complex
-  // The store tests (cartStore.test.ts) cover the cart functionality thoroughly
-  // Component renders correctly and button functionality works in browser
+  it('disables add to cart button when all stock is in cart', () => {
+    const productWithLimitedStock = { ...mockProduct, stock: 5 };
+    mockStoreWithItems([{ product: productWithLimitedStock, quantity: 5 }]);
+
+    render(<ProductCard product={productWithLimitedStock} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    expect(button).toBeDisabled();
+  });
+
+  it('disables add to cart button when quantity in cart exceeds stock', () => {
+    const productWithLimitedStock = { ...mockProduct, stock: 3 };
+    mockStoreWithItems([{ product: productWithLimitedStock, quantity: 4 }]);
+
+    render(<ProductCard product={productWithLimitedStock} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    expect(button).toBeDisabled();
+  });
+
+  it('enables add to cart button when stock is available and not all in cart', () => {
+    const productWithStock = { ...mockProduct, stock: 10 };
+    mockStoreWithItems([{ product: productWithStock, quantity: 5 }]);
+
+    render(<ProductCard product={productWithStock} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    expect(button).not.toBeDisabled();
+  });
+
+  it('does not show out of stock badge when stock exists but all items are in cart', () => {
+    const productWithStock = { ...mockProduct, stock: 3 };
+    mockStoreWithItems([{ product: productWithStock, quantity: 3 }]);
+
+    render(<ProductCard product={productWithStock} />);
+
+    expect(screen.queryByText('Out of Stock')).not.toBeInTheDocument();
+  });
+
+  it('shows out of stock badge only when stock is 0', () => {
+    const productWithNoStock = { ...mockProduct, stock: 0 };
+    mockStoreWithItems([]);
+
+    render(<ProductCard product={productWithNoStock} />);
+
+    expect(screen.getByText('Out of Stock')).toBeInTheDocument();
+  });
+
+  it('enables button when product not in cart and has stock', () => {
+    const productWithStock = { ...mockProduct, stock: 10 };
+    mockStoreWithItems([]);
+
+    render(<ProductCard product={productWithStock} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    expect(button).not.toBeDisabled();
+  });
+
+  it('calls addToCart when add to cart button is clicked', async () => {
+    mockStoreWithItems([]);
+
+    render(<ProductCard product={mockProduct} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    await userEvent.click(button);
+
+    expect(mockAddToCart).toHaveBeenCalledWith(mockProduct, 1);
+  });
 });

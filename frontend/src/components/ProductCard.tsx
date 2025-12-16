@@ -10,12 +10,16 @@ interface ProductCardProps {
 
 export const ProductCard = ({ product }: ProductCardProps) => {
   const addToCart = useCartStore((state) => state.addToCart);
+  const cartItems = useCartStore((state) => state.items);
 
   const handleAddToCart = () => {
     addToCart(product, 1);
   };
 
+  const cartItem = cartItems.find((item) => item.product.id === product.id);
+  const quantityInCart = cartItem ? cartItem.quantity : 0;
   const isOutOfStock = product.stock === 0;
+  const isAddToCartDisabled = isOutOfStock || quantityInCart >= product.stock;
 
   return (
     <Card sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
@@ -24,7 +28,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
         height="240"
         image={product.image_url || 'https://via.placeholder.com/400x240?text=No+Image'}
         alt={product.name}
-        sx={{ objectFit: 'cover' }}
+        sx={{ objectFit: 'contain' }}
       />
       <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
         <Box sx={{ mb: 1, display: 'flex', justifyContent: 'space-between', alignItems: 'start' }}>
@@ -65,7 +69,7 @@ export const ProductCard = ({ product }: ProductCardProps) => {
             color="primary"
             startIcon={<AddIcon />}
             onClick={handleAddToCart}
-            disabled={isOutOfStock}
+            disabled={isAddToCartDisabled}
             size="small"
           >
             Add to Cart

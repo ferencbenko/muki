@@ -185,4 +185,36 @@ describe('useCartStore', () => {
       expect(result.current.getItemCount()).toBe(0);
     });
   });
+
+  describe('openCart', () => {
+    it('should set isOpen to true', () => {
+      const { result } = renderHook(() => useCartStore());
+
+      expect(result.current.isOpen).toBe(false);
+
+      act(() => {
+        result.current.openCart();
+      });
+
+      expect(result.current.isOpen).toBe(true);
+    });
+  });
+
+  describe('closeCart', () => {
+    it('should set isOpen to false', () => {
+      const { result } = renderHook(() => useCartStore());
+
+      act(() => {
+        result.current.openCart();
+      });
+
+      expect(result.current.isOpen).toBe(true);
+
+      act(() => {
+        result.current.closeCart();
+      });
+
+      expect(result.current.isOpen).toBe(false);
+    });
+  });
 });
