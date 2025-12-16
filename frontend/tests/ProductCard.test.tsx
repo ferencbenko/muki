@@ -39,7 +39,7 @@ describe('ProductCard', () => {
 
     expect(screen.getByText('Test Product')).toBeInTheDocument();
     expect(screen.getByText('Test Description')).toBeInTheDocument();
-    expect(screen.getByText('$99.99')).toBeInTheDocument();
+    expect(screen.getByText('€99.99')).toBeInTheDocument();
   });
 
   it('displays out of stock badge when stock is 0', () => {

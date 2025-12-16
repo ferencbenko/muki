@@ -9,7 +9,7 @@
     "start": "node dist/server.js",
     "test": "jest --coverage",
     "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage --coverageReporters=text-lcov",
+    "test:coverage": "jest --coverage --coverageReporters=text --coverageReporters=json-summary --coverageReporters=html",
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
     "format": "prettier --write \"src/**/*.ts\" \"tests/**/*.ts\""
@@ -22,6 +22,9 @@
   ],
   "author": "",
   "license": "MIT",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "dependencies": {
     "express": "^4.18.2",
     "mysql2": "^3.6.5",
