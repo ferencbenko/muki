@@ -2,7 +2,7 @@ import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProductCard } from '../src/components/ProductCard';
 import { useCartStore } from '../src/store/cartStore';
-import { Product } from '../src/types';
+import { CartItem, CartState, Product } from '../src/types';
 
 // Mock the store
 vi.mock('../src/store/cartStore');
@@ -10,8 +10,8 @@ vi.mock('../src/store/cartStore');
 describe('ProductCard', () => {
   const mockAddToCart = vi.fn();
 
-  const mockStoreWithItems = (items: any[] = []) => {
-    vi.mocked(useCartStore).mockImplementation((selector: any) => {
+  const mockStoreWithItems = (items: CartItem[] = []) => {
+    vi.mocked(useCartStore).mockImplementation(<T,>(selector: (state: CartState) => T): T => {
       const store = {
         addToCart: mockAddToCart,
         items,
@@ -97,9 +97,7 @@ describe('ProductCard', () => {
 
   it('disables add to cart button when all stock is in cart', () => {
     const productWithLimitedStock = { ...mockProduct, stock: 5 };
-    mockStoreWithItems([
-      { product: productWithLimitedStock, quantity: 5 },
-    ]);
+    mockStoreWithItems([{ product: productWithLimitedStock, quantity: 5 }]);
 
     render(<ProductCard product={productWithLimitedStock} />);
 
@@ -109,9 +107,7 @@ describe('ProductCard', () => {
 
   it('disables add to cart button when quantity in cart exceeds stock', () => {
     const productWithLimitedStock = { ...mockProduct, stock: 3 };
-    mockStoreWithItems([
-      { product: productWithLimitedStock, quantity: 4 },
-    ]);
+    mockStoreWithItems([{ product: productWithLimitedStock, quantity: 4 }]);
 
     render(<ProductCard product={productWithLimitedStock} />);
 
@@ -121,9 +117,7 @@ describe('ProductCard', () => {
 
   it('enables add to cart button when stock is available and not all in cart', () => {
     const productWithStock = { ...mockProduct, stock: 10 };
-    mockStoreWithItems([
-      { product: productWithStock, quantity: 5 },
-    ]);
+    mockStoreWithItems([{ product: productWithStock, quantity: 5 }]);
 
     render(<ProductCard product={productWithStock} />);
 
@@ -133,9 +127,7 @@ describe('ProductCard', () => {
 
   it('does not show out of stock badge when stock exists but all items are in cart', () => {
     const productWithStock = { ...mockProduct, stock: 3 };
-    mockStoreWithItems([
-      { product: productWithStock, quantity: 3 },
-    ]);
+    mockStoreWithItems([{ product: productWithStock, quantity: 3 }]);
 
     render(<ProductCard product={productWithStock} />);
 
