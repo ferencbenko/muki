@@ -1,8 +1,8 @@
 # Muki E-Commerce Application
 
 [![CI/CD Pipeline](https://github.com/ferencbenko/muki/actions/workflows/ci.yml/badge.svg)](https://github.com/ferencbenko/muki/actions/workflows/ci.yml)
-[![Backend Coverage](https://codecov.io/gh/ferencbenko/muki/branch/main/graph/badge.svg?flag=backend)](https://codecov.io/gh/ferencbenko/muki)
-[![Frontend Coverage](https://codecov.io/gh/ferencbenko/muki/branch/main/graph/badge.svg?flag=frontend)](https://codecov.io/gh/ferencbenko/muki)
+[![Backend Coverage](https://codecov.io/gh/ferencbenko/muki/branch/main/graph/badge.svg?flag=backend&label=backend)](https://codecov.io/gh/ferencbenko/muki)
+[![Frontend Coverage](https://codecov.io/gh/ferencbenko/muki/branch/main/graph/badge.svg?flag=frontend&label=frontend)](https://codecov.io/gh/ferencbenko/muki)
 
 A modern, full-stack e-commerce application built with React, Node.js, and MySQL. This project features a product catalog, shopping cart functionality, and a RESTful API backend.
 
