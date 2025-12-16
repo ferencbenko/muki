@@ -2,9 +2,9 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [main, develop]
+    branches: [main, dev]
   pull_request:
-    branches: [main, develop]
+    branches: [main, dev]
 
 jobs:
   backend:
@@ -94,9 +94,9 @@ jobs:
         run: npm run test:coverage
 
       - name: Upload frontend coverage
-        uses: codecov/codecov-action@v4
+        uses: codecov/codecov-action@v5
         with:
-          files: ./frontend/coverage/coverage-final.json
+          files: ./frontend/coverage/lcov.info
           flags: frontend
           name: frontend-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
