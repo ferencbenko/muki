@@ -54,7 +54,7 @@ A modern, full-stack e-commerce application built with React, Node.js, and MySQL
 
 Before you begin, ensure you have the following installed:
 
-- **Node.js** (v18 or higher)
+- **Node.js** (v20 or higher)
 - **Docker** and Docker Compose
 
 ## 🚀 Quick Start
@@ -180,6 +180,7 @@ muki/
 ├── frontend/            # React frontend
 │   ├── src/
 │   │   ├── components/  # React components
+│   │   ├── pages/       # Page components
 │   │   ├── services/    # API client
 │   │   ├── store/       # State management
 │   │   ├── types/       # TypeScript type definitions
@@ -239,9 +240,4 @@ Or use Adminer (web-based database management tool) at http://localhost:8080
 
 ## 📚 API Documentation
 
-Once the backend is running, visit http://localhost:3000/api-docs to explore the API using Swagger UI. The documentation includes:
-
-- Available endpoints
-- Request/response schemas
-- Try-it-out functionality
-- Authentication requirements
+Once the backend is running, visit http://localhost:3000/api-docs to explore the API using Swagger UI
