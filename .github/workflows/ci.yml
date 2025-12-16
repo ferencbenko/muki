@@ -56,17 +56,6 @@ jobs:
           PORT: 3000
           NODE_ENV: test
 
-      - name: Generate coverage badges
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-        uses: cicirello/jacoco-badge-generator@v2
-        with:
-          badges-directory: .github/badges
-          generate-coverage-badge: true
-          coverage-badge-filename: backend-coverage.svg
-          generate-branches-badge: true
-          branches-badge-filename: backend-branches.svg
-          jacoco-csv-file: backend/coverage/coverage-summary.json
-
       - name: Upload backend coverage
         uses: codecov/codecov-action@v5
         with:
@@ -111,76 +100,3 @@ jobs:
           flags: frontend
           name: frontend-coverage
           token: ${{ secrets.CODECOV_TOKEN }}
-
-  update-badges:
-    name: Update Coverage Badges
-    runs-on: ubuntu-latest
-    needs: [backend, frontend]
-    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: "20"
-
-      - name: Install dependencies for backend
-        working-directory: ./backend
-        run: npm install
-
-      - name: Install dependencies for frontend
-        working-directory: ./frontend
-        run: npm install
-
-      - name: Generate backend coverage
-        working-directory: ./backend
-        run: npm run test:coverage
-
-      - name: Generate frontend coverage
-        working-directory: ./frontend
-        run: npm run test:coverage
-
-      - name: Extract coverage percentages
-        id: coverage
-        run: |
-          # Backend coverage
-          BACKEND_LINES=$(grep -oP '(?<=Lines        : )\d+\.\d+' backend/coverage/lcov-report/index.html || echo "0")
-          BACKEND_BRANCHES=$(grep -oP '(?<=Branches     : )\d+\.\d+' backend/coverage/lcov-report/index.html || echo "0")
-          BACKEND_FUNCTIONS=$(grep -oP '(?<=Functions    : )\d+\.\d+' backend/coverage/lcov-report/index.html || echo "0")
-          BACKEND_STATEMENTS=$(grep -oP '(?<=Statements   : )\d+\.\d+' backend/coverage/lcov-report/index.html || echo "0")
-
-          # Frontend coverage (parse from JSON)
-          FRONTEND_LINES=$(node -e "const fs=require('fs');const cov=JSON.parse(fs.readFileSync('frontend/coverage/coverage-summary.json'));console.log(cov.total.lines.pct)" 2>/dev/null || echo "0")
-          FRONTEND_BRANCHES=$(node -e "const fs=require('fs');const cov=JSON.parse(fs.readFileSync('frontend/coverage/coverage-summary.json'));console.log(cov.total.branches.pct)" 2>/dev/null || echo "0")
-          FRONTEND_FUNCTIONS=$(node -e "const fs=require('fs');const cov=JSON.parse(fs.readFileSync('frontend/coverage/coverage-summary.json'));console.log(cov.total.functions.pct)" 2>/dev/null || echo "0")
-          FRONTEND_STATEMENTS=$(node -e "const fs=require('fs');const cov=JSON.parse(fs.readFileSync('frontend/coverage/coverage-summary.json'));console.log(cov.total.statements.pct)" 2>/dev/null || echo "0")
-
-          echo "backend_lines=$BACKEND_LINES" >> $GITHUB_OUTPUT
-          echo "backend_branches=$BACKEND_BRANCHES" >> $GITHUB_OUTPUT
-          echo "backend_statements=$BACKEND_STATEMENTS" >> $GITHUB_OUTPUT
-          echo "frontend_lines=$FRONTEND_LINES" >> $GITHUB_OUTPUT
-          echo "frontend_branches=$FRONTEND_BRANCHES" >> $GITHUB_OUTPUT
-          echo "frontend_statements=$FRONTEND_STATEMENTS" >> $GITHUB_OUTPUT
-
-      - name: Update README badges
-        run: |
-          # Update README with new coverage percentages
-          sed -i "s/Backend%20Coverage-[0-9.]*%25/Backend%20Coverage-${{ steps.coverage.outputs.backend_statements }}%25/g" README.md
-          sed -i "s/Frontend%20Coverage-[0-9.]*%25/Frontend%20Coverage-${{ steps.coverage.outputs.frontend_statements }}%25/g" README.md
-          sed -i "s/Backend%20Lines-[0-9.]*%25/Backend%20Lines-${{ steps.coverage.outputs.backend_lines }}%25/g" README.md
-          sed -i "s/Frontend%20Lines-[0-9.]*%25/Frontend%20Lines-${{ steps.coverage.outputs.frontend_lines }}%25/g" README.md
-
-      - name: Commit and push if changed
-        run: |
-          git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git config --local user.name "github-actions[bot]"
-          git add README.md
-          git diff --quiet && git diff --staged --quiet || (git commit -m "Update coverage badges [skip ci]" && git push)
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
