@@ -118,6 +118,39 @@ describe('ProductService', () => {
 
       expect(result.pagination.totalPages).toBe(3);
     });
+
+    it('should validate and correct negative page numbers', async () => {
+      (ProductModel.findWithPagination as jest.Mock).mockResolvedValue({
+        products: [],
+        total: 0,
+      });
+
+      await ProductService.getProductsWithPagination(-5, 10);
+
+      expect(ProductModel.findWithPagination).toHaveBeenCalledWith(1, 10);
+    });
+
+    it('should validate and correct negative limit', async () => {
+      (ProductModel.findWithPagination as jest.Mock).mockResolvedValue({
+        products: [],
+        total: 0,
+      });
+
+      await ProductService.getProductsWithPagination(1, -10);
+
+      expect(ProductModel.findWithPagination).toHaveBeenCalledWith(1, 1);
+    });
+
+    it('should use default parameters when not provided', async () => {
+      (ProductModel.findWithPagination as jest.Mock).mockResolvedValue({
+        products: [],
+        total: 0,
+      });
+
+      await ProductService.getProductsWithPagination();
+
+      expect(ProductModel.findWithPagination).toHaveBeenCalledWith(1, 10);
+    });
   });
 
   describe('validateProductAvailability', () => {

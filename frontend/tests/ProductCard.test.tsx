@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { ProductCard } from '../src/components/ProductCard';
 import { useCartStore } from '../src/store/cartStore';
@@ -153,7 +154,14 @@ describe('ProductCard', () => {
     expect(button).not.toBeDisabled();
   });
 
-  // Note: Testing MUI's click event with Zustand mocks is complex
-  // The store tests (cartStore.test.ts) cover the cart functionality thoroughly
-  // Component renders correctly and button functionality works in browser
+  it('calls addToCart when add to cart button is clicked', async () => {
+    mockStoreWithItems([]);
+
+    render(<ProductCard product={mockProduct} />);
+
+    const button = screen.getByRole('button', { name: /add to cart/i });
+    await userEvent.click(button);
+
+    expect(mockAddToCart).toHaveBeenCalledWith(mockProduct, 1);
+  });
 });
