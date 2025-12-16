@@ -45,13 +45,11 @@ app.use(errorHandler);
 // Start server
 const PORT = config.port;
 
-/* eslint-disable no-console */
 app.listen(PORT, () => {
-  console.log(`đźš€ Server running on port ${PORT}`);
-  console.log(`đź“š API Documentation: http://localhost:${PORT}/api-docs`);
-  console.log(`đźŹĄ Health check: http://localhost:${PORT}/api/health`);
-  console.log(`đź›Ťď¸Ź  Products API: http://localhost:${PORT}/api/products`);
+  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(`📚 API Documentation: http://localhost:${PORT}/api-docs`);
+  console.log(`✅ Health check: http://localhost:${PORT}/api/health`);
+  console.log(`🛒 Products API: http://localhost:${PORT}/api/products`);
 });
-/* eslint-enable no-console */
 
 export default app;
