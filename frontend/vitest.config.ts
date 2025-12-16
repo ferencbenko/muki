@@ -24,6 +24,9 @@ export default defineConfig({
         'src/components/ProductList.tsx',
         'src/components/ShoppingCart.tsx',
         'src/services/api.ts',
+        '**/.eslintrc.*',
+        '**/.*rc.*',
+        '**/*.cjs',
       ],
       thresholds: {
         branches: 70,
